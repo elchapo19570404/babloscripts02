@@ -25,3 +25,9 @@ if [ -z "$POD_IPS" ]; then
 fi
 
 echo "[INFO] Found $(echo "$POD_IPS" | wc -l) pod IPs. Scanning..."
+
+for ip in $POD_IPS; do
+  echo -e "\n[INFO] Scanning $ip with Nmap..."
+  NMAP_RESULT_FILE="$LOG_DIR/${ip}_nmap.txt"
+  nmap $NMAP_FLAGS "$ip" -oN "$NMAP_RESULT_FILE"
+done
