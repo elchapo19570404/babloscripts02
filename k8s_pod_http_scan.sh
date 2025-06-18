@@ -25,24 +25,3 @@ if [ -z "$POD_IPS" ]; then
 fi
 
 echo "[INFO] Found $(echo "$POD_IPS" | wc -l) pod IPs. Scanning..."
-
-for ip in $POD_IPS; do
-  echo -e "\n[INFO] Scanning $ip with Nmap..."
-  NMAP_RESULT_FILE="$LOG_DIR/${ip}_nmap.txt"
-  nmap $NMAP_FLAGS "$ip" -oN "$NMAP_RESULT_FILE"
-
-  # Check for HTTP/HTTPS ports
-  HTTP_PORTS=$(grep -E '^[0-9]+/tcp.*open' "$NMAP_RESULT_FILE" | grep -E 'http|https|www' | cut -d '/' -f 1)
-
-  for port in $HTTP_PORTS; do
-    PROTO="http"
-    [[ "$port" == "443" || "$port" == "8443" ]] && PROTO="https"
-    TARGET="$PROTO://$ip:$port"
-
-    echo "[INFO] Found $PROTO service on $ip:$port. Running Nikto..."
-    NIKTO_RESULT_FILE="$LOG_DIR/${ip}_${port}_nikto.txt"
-    nikto -host "$TARGET" -output "$NIKTO_RESULT_FILE" -nointeractive
-  done
-done
-
-echo -e "\n[INFO] Scan complete. All results saved in $LOG_DIR/"
