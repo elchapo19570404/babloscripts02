@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Customize Nmap scan flags
-NMAP_FLAGS=${1:--Pn -sS -F -p 80,443}
+NMAP_FLAGS=${1:--Pn -sS -p 80}
 TIMESTAMP=$(date +%F_%T)
 LOG_DIR="k8s_scan_$TIMESTAMP"
 mkdir -p "$LOG_DIR"
